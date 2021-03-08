@@ -24,13 +24,20 @@ based on e.g. [Nextflow](https://www.nextflow.io/).
 
 ## Usage
 
-1. Pack the environment
+1. Clone this repository (retrieve `Dockerfile`/`Singularity`)
+
+```
+git clone git@github.com:grst/containerize-conda.git
+cd containerize-conda
+```
+
+2. Pack the environment
 
 ```
 conda-pack -n <MY_ENV> -o packed_environment.tar.gz
 ```
 
-2. Build the container
+3. Build the container
 
 ```
 # With singularity
