@@ -17,8 +17,8 @@ echo ENV=$CONDAENV
 echo CONTAINER=$CONTAINER
 echo DIR=$DIR
 
-conda-pack -n $CONDAENV -o $DIR/packed_environment.tar.gz --ignore-missing-files && \
+conda-pack -n $CONDAENV -o $DIR/packed_environment.tar.gz --ignore-missing-files --force && \
   cp Singularity $DIR && \
   cd $DIR && \
-  singularity build --fakeroot $CONTAINER Singularity
+  singularity build --fakeroot --force $CONTAINER Singularity
 
