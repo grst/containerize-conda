@@ -16,48 +16,24 @@ data analysis
 workflow](https://grst.github.io/bioinformatics/2019/12/23/reportsrender.html)
 based on e.g. [Nextflow](https://www.nextflow.io/).
 
-## Prerequisites
+## Variant without conda-pack (singularity only)
 
- * [conda-pack](https://conda.github.io/conda-pack/)
- * either Docker, Podman or Singularity
- * source conda environment needs to be on a linux x64 machine.
+Conda envs cannot simply be "moved" as some paths are hardcoded into the environment.
+I previously applied `conda-pack` to solve this issue, which works fine in most cases
+but breaks in some (especially for old environments that have a long history
+of manually installing stuff through R or pip)
 
-## Usage
+This is an other appraoch where the issue is solved by copying the conda environment
+with its full absolute path to the container and append a line to the Singularity environment
+file that activates the conda environment from that path once the container is started.
 
-1. Clone this repository (retrieve `Dockerfile`/`Singularity`)
+Naively, this could be solved with `%files /path/to/env`, however, this dereferences
+all symbolic links, which breaks some environments. Instead, I involve some bash/tar
+magic to keep all symbolic links intact *within* the conda environment, but at the
+same time include all files that are outside the conda env, but referenced
+by a symbolic link.
 
-```
-git clone git@github.com:grst/containerize-conda.git
-cd containerize-conda
-```
+I don't have a lot of experience yet if it is really more stable than conda-pack
+or just happens to fail in different cases.
 
-2. Pack the environment
 
-```
-conda-pack -n <MY_ENV> -o packed_environment.tar.gz
-```
-
-3. Build the container
-
-```
-# With singularity
-singularity build --fakeroot <OUTPUT_CONTAINER.sif> Singularity
-
-# With Docker
-docker build . -t <TAG>
-
-# With Podman/Buildah
-podman build . -t <TAG>
-```
-
-## How it works
-Conda environment can't be just "moved" to another location, as some paths are
-hardcoded into the environment. `conda-pack` takes care of replacing these paths
-back to placeholders and creates a `.tar.gz` archive that contains the
-environment. This environment can be unpacked to another machine (or, in our
-case, a container). Running `conda-unpack` in the environment replaces the
-placeholders back to the actual paths matching the new location.
-
-## Troubleshooting
-
- * `find . -xtype l` finds broken symbolic links which leads to a failed container creation...
