@@ -57,3 +57,7 @@ back to placeholders and creates a `.tar.gz` archive that contains the
 environment. This environment can be unpacked to another machine (or, in our
 case, a container). Running `conda-unpack` in the environment replaces the 
 placeholders back to the actual paths matching the new location. 
+
+## Troubleshooting
+
+ * `find . -xtype l` finds broken symbolic links which leads to a failed container creation...
