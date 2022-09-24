@@ -43,6 +43,7 @@ you can modify `Singularity.template`, and specify it with the `--template` argu
 
 
 ## How it works
+<<<<<<< HEAD
 
 Conda envs cannot simply be "moved" as some paths are hardcoded into the environment.
 I previously applied `conda-pack` to solve this issue, which works fine in most cases
@@ -72,5 +73,7 @@ This is an updated version of my scripts that works without `conda-pack` and tur
 to work even in cases where the conda-pack variant failed. It works only with Singularity at the moment, though.
 If you are looking for the previous scripts based on `conda-pack`, because you need a Docker variant, or they just
 work for you, they are in the [conda-pack](conda-pack) folder with a dedicated [README](conda-pack/README.md).
+
+
 
 
