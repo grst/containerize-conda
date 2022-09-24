@@ -18,12 +18,6 @@ based on e.g. [Nextflow](https://www.nextflow.io/).
 
 ## Usage
 
-**Note**: This is an updated version of my scripts that works without `conda-pack` and turned out
-to work even in cases where the conda-pack variant failed. It works only with Singularity at the moment, though.
-If you are looking for the previous scripts based on `conda-pack`, because you need a Docker variant, or they just
-work for you, they are in the [conda-pack](conda-pack) folder with a dedicated [README](conda-pack/README.md).
-
-
 ```
 usage: conda_to_singularity.py [-h] [--template TEMPLATE] CONDA_ENV OUTPUT_CONTAINER
 
@@ -71,5 +65,12 @@ by a symbolic link.
 
 I don't have a lot of experience yet if it is really more stable than conda-pack
 or just happens to fail in different cases.
+
+## Where's the conda-pack version?
+
+This is an updated version of my scripts that works without `conda-pack` and turned out
+to work even in cases where the conda-pack variant failed. It works only with Singularity at the moment, though.
+If you are looking for the previous scripts based on `conda-pack`, because you need a Docker variant, or they just
+work for you, they are in the [conda-pack](conda-pack) folder with a dedicated [README](conda-pack/README.md).
 
 
