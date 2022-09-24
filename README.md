@@ -16,20 +16,56 @@ data analysis
 workflow](https://grst.github.io/bioinformatics/2019/12/23/reportsrender.html)
 based on e.g. [Nextflow](https://www.nextflow.io/).
 
-## Variant without conda-pack (singularity only)
+## Usage
+
+**Note**: This is an updated version of my scripts that works without `conda-pack` and turned out
+to work even in cases where the conda-pack variant failed. It works only with Singularity at the moment, though.
+If you are looking for the previous scripts based on `conda-pack`, because you need a Docker variant, or they just
+work for you, they are in the [conda-pack](conda-pack) folder with a dedicated [README](conda-pack/README.md).
+
+
+```
+usage: conda_to_singularity.py [-h] [--template TEMPLATE] CONDA_ENV OUTPUT_CONTAINER
+
+Convert a conda env to a singularity container.
+
+positional arguments:
+  CONDA_ENV            Absolute path to the conda enviornment. Must be exactely the path as it shows up in `conda env list`, not a symbolic link to it, nor a realpath.
+  OUTPUT_CONTAINER     Output path where the singularity container will be safed.
+
+optional arguments:
+  -h, --help           show this help message and exit
+  --template TEMPLATE  Path to a Singularity template file. Must contain a `{conda_env}` placeholder. If not specified, uses the default template shipped with this script.
+```
+
+For example
+
+```
+conda_to_singularity.py /home/sturm/.conda/envs/whatever whatever.sif
+```
+
+By default, the image will be based on CentOS 7. If you want a different base image,
+you can modify `Singularity.template`, and specify it with the `--template` argument.
+
+
+## How it works
 
 Conda envs cannot simply be "moved" as some paths are hardcoded into the environment.
 I previously applied `conda-pack` to solve this issue, which works fine in most cases
 but breaks in some (especially for old environments that have a long history
-of manually installing stuff through R or pip)
+of manually installing stuff through R or pip).
 
 This is an other appraoch where the issue is solved by copying the conda environment
 with its full absolute path to the container and append a line to the Singularity environment
-file that activates the conda environment from that path once the container is started.
+file that activates the conda environment from that path once the container is started:
+
+```
+echo "source /opt/conda/bin/activate {conda_env}" >>$SINGULARITY_ENVIRONMENT
+```
 
 Naively, this could be solved with `%files /path/to/env`, however, this dereferences
-all symbolic links, which breaks some environments. Instead, I involve some bash/tar
-magic to keep all symbolic links intact *within* the conda environment, but at the
+all symbolic links, which breaks some environments. Instead, I build a tar archive
+that keeps all symbolic links intact *within* the conda environment, but at the
 same time include all files that are outside the conda env, but referenced
 by a symbolic link.
 
