@@ -2,10 +2,10 @@
 
 import tempfile
 from subprocess import call
-from os.path import abspath, join as join_path, dirname
-from textwrap import dedent
+from os.path import abspath, join as join_path, dirname, realpath
 import argparse
 from pathlib import Path
+from time import sleep
 
 
 def _generate_file_list(conda_env, filelist_path):
@@ -32,12 +32,14 @@ def _generate_file_list(conda_env, filelist_path):
 
 def _build_tar_archive(filelist_path, archive_path):
     """Build a tar archive from the filelist"""
-    call(["tar", "cvf", archive_path, "-T", filelist_path])
+    call(["tar", "cf", archive_path, "-T", filelist_path])
 
 
-def _build_container(singularity_file, output_path):
+def _build_container(tmpdir, singularity_file, output_path):
     """
     Actually builds the container.
+
+    tmpdir is the temporary directory that already contains the tar archive.
     """
     call(
         [
@@ -48,6 +50,7 @@ def _build_container(singularity_file, output_path):
             output_path,
             singularity_file,
         ],
+        cwd=tmpdir,
     )
 
 
@@ -56,7 +59,7 @@ def conda2singularity(conda_env, output_path, template_path):
 
     with tempfile.TemporaryDirectory() as tmpdir:
         tmpdir = Path(tmpdir)
-        print("Using temporary directory: {tmpdir}")
+        print(f"Using temporary directory: {tmpdir}")
         singularity_file_path = tmpdir / "Singularity"
         filelist_path = tmpdir / "filelist.txt"
         tar_archive_path = tmpdir / "packed_env.tar"
@@ -73,11 +76,13 @@ def conda2singularity(conda_env, output_path, template_path):
         print("Building file list...")
         _generate_file_list(conda_env, filelist_path)
 
+        # We are using a tar archive as tar is the only way of getting the symbolic links into the singularity
+        # container as symbolic links.
         print("Building tar archive...")
         _build_tar_archive(filelist_path, tar_archive_path)
 
         print("Building singularity container...")
-        _build_container(singularity_file_path, output_path)
+        _build_container(tmpdir, singularity_file_path, output_path)
 
 
 if __name__ == "__main__":
@@ -95,7 +100,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--template",
         help="Path to a Singularity template file. Must contain a `{conda_env}` placeholder. If not specified, uses the default template shipped with this script.",
-        default=join_path(dirname(__file__), "Singularity.template"),
+        default=join_path(dirname(realpath(__file__)), "Singularity.template"),
     )
     args = parser.parse_args()
     conda2singularity(args.CONDA_ENV, args.OUTPUT_CONTAINER, args.template)
