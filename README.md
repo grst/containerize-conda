@@ -43,7 +43,6 @@ you can modify `Singularity.template`, and specify it with the `--template` argu
 
 
 ## How it works
-<<<<<<< HEAD
 
 Conda envs cannot simply be "moved" as some paths are hardcoded into the environment.
 I previously applied `conda-pack` to solve this issue, which works fine in most cases
