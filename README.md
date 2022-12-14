@@ -10,7 +10,7 @@ as an `environment.yml` file tend to [break after a
 while](https://github.com/conda/conda/issues/9257).
 
 Using the instructions below allows to package an existing environment
-into a Docker or Singularity container which should be more portable
+into a Singularity container which should be more portable
 and can also easily be integrated into a [fully reproducible
 data analysis
 workflow](https://grst.github.io/bioinformatics/2019/12/23/reportsrender.html)
@@ -66,10 +66,12 @@ by a symbolic link.
 I don't have a lot of experience yet if it is really more stable than conda-pack
 or just happens to fail in different cases.
 
-## Where's the conda-pack version?
+## Where's the conda-pack/Docker version?
 
 This is an updated version of my scripts that works without `conda-pack` and turned out
-to work even in cases where the conda-pack variant failed. It works only with Singularity at the moment, though.
+to work even in cases where the conda-pack variant failed. It works only with Singularity at the moment. 
+I don't see any major issues porting the new approach to Docker, but don't have need for that myself. 
+
 If you are looking for the previous scripts based on `conda-pack`, because you need a Docker variant, or they just
 work for you, they are in the [conda-pack](conda-pack) folder with a dedicated [README](conda-pack/README.md).
 
